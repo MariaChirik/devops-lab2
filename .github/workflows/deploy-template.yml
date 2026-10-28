@@ -1,0 +1,28 @@
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image-tag:
+        required: true
+        type: string
+    secrets:
+      DEPLOY_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Check deploy token (value is never printed)
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: test -n "$DEPLOY_TOKEN" && echo "DEPLOY_TOKEN is set"
+
+      - name: Deploy
+        run: |
+          echo "Deploying ${{ inputs.image-tag }} to ${{ inputs.environment }}"
